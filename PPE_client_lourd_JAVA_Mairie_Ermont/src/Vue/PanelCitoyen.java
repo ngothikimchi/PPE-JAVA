@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -20,6 +21,7 @@ import javax.swing.JTextField;
 
 import Controleur.Citoyen;
 import Controleur.Tableau;
+import Controleur.User;
 import Modele.modele;
 
 public class PanelCitoyen extends PanelDeBase implements ActionListener
@@ -43,6 +45,7 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 	private JTextField txtEmail= new JTextField();
 	private JComboBox<String> cbQuestion= new JComboBox<String>();
 	private JTextField txtReponse= new JTextField();
+	private JTextField txtMdp= new JTextField();
 	
 	//zone de recherche - par requeque like
 	private JTextField txtMot = new JTextField();
@@ -54,7 +57,7 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 	public PanelCitoyen() 
 	{
 		super(new Color(195, 232, 199));
-		this.panelForm.setLayout(new GridLayout(14,2));
+		this.panelForm.setLayout(new GridLayout(15,2));
 		this.panelForm.setBackground(Color.white);
 		this.panelForm.add(new JLabel(" Nom"));
 		this.panelForm.add(this.txtNomC);
@@ -96,15 +99,18 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 		this.panelForm.add(new JLabel(" Reponse"));
 		this.panelForm.add(this.txtReponse);
 		
+		this.panelForm.add(new JLabel(" Mdp"));
+		this.panelForm.add(this.txtMdp);
+		
 		this.panelForm.add(this.btAnnuler);
 		this.panelForm.add(this.btEnregistrer);
 		
-		this.panelForm.setBounds(20,20,280,300);
+		this.panelForm.setBounds(20,20,280,320);
 		this.add(this.panelForm);
 		
 		
 		//construction du panel Table - back ground table de données
-		this.panelTable.setBounds(310,20,620,320);
+		this.panelTable.setBounds(310,20,620,280);
 		this.panelTable.setBackground(new Color(195, 232, 199));
 		this.panelTable.setLayout(null);
 		
@@ -153,6 +159,15 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 		this.btRechercher.setBounds(290,10,120,30);
 		this.panelTable.add(this.btRechercher);
 		this.add(this.panelTable);
+		
+		//add a photo
+		/*ImageIcon User = new ImageIcon("src/images/citoyen.png");
+		JLabel lbUser = new JLabel(User);
+		lbUser.setBounds(780,220,110,140);
+		lbUser.setBackground(Color.red);
+		//this.add(lbUser);
+		this.add(lbUser);*/
+		
 		
 		//gestion de la JTable avec MouListener
 		this.uneTable.addMouseListener(new MouseListener()
@@ -311,6 +326,7 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 		this.txtEmail.setText("");
 		this.cbQuestion.setSelectedItem("");
 		this.txtReponse.setText("");
+		this.txtMdp.setText("");
 	}
 	
 	public Citoyen saisirCitoyen()
@@ -472,8 +488,29 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 				, cp
 				, situation
 				, email
-				,question
-				,reponse);
+				, question
+				, reponse);
+	}
+	
+	public User saisirUser()
+	{
+		String email =this.txtEmail.getText();
+		String mdp=this.txtMdp.getText();
+		int idrole=1;
+		
+		String errorMessage = "";
+		
+		if(mdp.equals(""))
+		{
+			this.txtMdp.setBackground(Color.red);
+			errorMessage += "Le mot de passe n'eest pas correct \n";
+		}
+		if(errorMessage != "")
+		{
+			return null;
+		}
+		
+		return new User (idrole, email, mdp);
 	}
 
 
@@ -486,20 +523,22 @@ public class PanelCitoyen extends PanelDeBase implements ActionListener
 		}
 		else if (e.getSource()==this.btEnregistrer && e.getActionCommand().equals("Enregistrer"))
 		{
-				Citoyen unCitoyen = this.saisirCitoyen();
+				Citoyen unCitoyen 	= 	this.saisirCitoyen();
+				User unUser			=	this.saisirUser();
 				
-				if(unCitoyen == null)
+				if(unCitoyen == null
+					|| unUser == null)
 					return;
 				
 				modele.insertCitoyen(unCitoyen);
+				
+				modele.insertUser(unUser);
 				
 				//RECUPERER id auto_increment de la bdd
 				unCitoyen =modele.selectWhereCitoyen(unCitoyen.getNom(), unCitoyen.getPrenom(), unCitoyen.getSexe(),
 						unCitoyen.getDateNaissance(), unCitoyen.getLieuNaissance(), unCitoyen.getCpNaissance(), 
 						unCitoyen.getAdresse(), unCitoyen.getVille(), unCitoyen.getCp(),unCitoyen.getSituation(), unCitoyen.getEmail(),
 						unCitoyen.getQuestion(),unCitoyen.getReponse());
-				
-			
 				
 				//mettre a jour l'affichage
 				Object ligne[]= {unCitoyen.getIdcitoyen(),unCitoyen.getNom(), unCitoyen.getPrenom(), unCitoyen.getSexe(),

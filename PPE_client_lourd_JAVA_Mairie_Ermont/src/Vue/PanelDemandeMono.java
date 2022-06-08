@@ -130,8 +130,9 @@ public class PanelDemandeMono extends PanelDeBase implements ActionListener{
 						cbxEtat.setSelectedItem(strEtat);
 
 					}
-					else 
+					else
 					{
+						
 						int idemande = Integer.parseInt(unTableau.getValueAt(numLigne, 0).toString());
 						
 						modele.RefuserDemandeMono(idemande);

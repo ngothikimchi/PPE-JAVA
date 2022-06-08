@@ -120,7 +120,7 @@ public class PanelParticipant extends PanelDeBase implements ActionListener
 					ArrayList<Citoyen> lesCitoyens = modele.selectAllCitoyens();
 					for (Citoyen unCitoyen :lesCitoyens)
 					{	
-						if(String.valueOf(unCitoyen.getIdcitoyen()) == idcitoyen)
+						if(idcitoyen.equals(String.valueOf(unCitoyen.getIdcitoyen())))						
 						{
 							nomCitoyen = unCitoyen.getNom();
 							break;
@@ -134,7 +134,7 @@ public class PanelParticipant extends PanelDeBase implements ActionListener
 					ArrayList<Evenement> lesEves = modele.selectAllEvenements();
 					for (Evenement unEve :lesEves)
 					{	
-						if(String.valueOf(unEve.getIdE()) == idE)
+						if(idE.equals(String.valueOf(unEve.getIdE())))						
 						{
 							nomE = unEve.getNomE();
 							break;
@@ -144,7 +144,7 @@ public class PanelParticipant extends PanelDeBase implements ActionListener
 					
 					cbxIdEvenement.setSelectedItem(idE + "-" + nomE);
 					
-					String dateDemande = uneTable.getValueAt(numLigne1,3).toString();
+					String dateDemande = uneTable.getValueAt(numLigne1,2).toString();
 					txtDatedemande.setText(dateDemande);
 				
 					btEnregistrer.setText("Modifier");
@@ -319,6 +319,8 @@ public class PanelParticipant extends PanelDeBase implements ActionListener
 	{
 	
 		Participer unParticipant = this.saisirParticipant();
+		if(unParticipant == null)
+			return;
 		
 		JOptionPane.showMessageDialog(this, "Modification effectuee");
 		int numLigne =this.uneTable.getSelectedRow();

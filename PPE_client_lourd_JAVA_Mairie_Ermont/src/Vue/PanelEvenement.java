@@ -232,7 +232,7 @@ public class PanelEvenement extends PanelDeBase implements ActionListener
 		this.txtDateDebut.setText("");
 		this.txtDateFin.setText("");
 		this.txtDatefinIns.setText("");
-		this.txtDatefinIns.setText("");
+		this.txtNbMax.setText("");
 		cbCodetypeE.setSelectedItem("");
 		cbIdAssociation.setSelectedItem("");
 
@@ -367,7 +367,7 @@ public class PanelEvenement extends PanelDeBase implements ActionListener
 		  errorMessage += "Nombre max est requis \n";
 		}
 		//check type evenement
-		if(tab.length !=2)
+		if(tab.length == 0)
 		{
 			this.cbCodetypeE.setBackground(Color.red);
 			errorMessage += "Code type évenement est requis \n";
@@ -385,7 +385,7 @@ public class PanelEvenement extends PanelDeBase implements ActionListener
 		}
 		else
 		{
-			idAssoc= Integer.parseInt(tab[0]);
+			idAssoc= Integer.parseInt(tab1[0]);
 		}
 		
 		if(errorMessage != "")
@@ -396,11 +396,7 @@ public class PanelEvenement extends PanelDeBase implements ActionListener
 		}
 		
 		//*************************************************
-		
-		
-		
-		
-		
+
 
 		if(! nomE.equals("") 
 				&& ! contenuE.equals("") 

@@ -27,7 +27,7 @@ public class VueConnexion extends JFrame implements ActionListener, KeyListener{
 	private JPanel panelConnexion = new JPanel();
 	private JButton btSeConnecter = new JButton("Se Connecter");
 	private JButton btAnnuler = new JButton("Annuler");
-	private JTextField txtEmail = new JTextField("a@gmail.com");
+	private JTextField txtEmail = new JTextField("a@ville-ermont.fr");
 	private JPasswordField txtMdp = new JPasswordField("123");
 	
 	public VueConnexion ()
@@ -109,6 +109,9 @@ public class VueConnexion extends JFrame implements ActionListener, KeyListener{
 	public void traitement() {
 		String email =this.txtEmail.getText();
 		String mdp = new String (this.txtMdp.getPassword());
+		
+		//hashage du MDP 
+		mdp = Mairie_Ermont.crypterMdp(mdp); 
 		
 		//vérification en BDD de l'user
 		User unUser =Mairie_Ermont.selectWhereUser(email, mdp);

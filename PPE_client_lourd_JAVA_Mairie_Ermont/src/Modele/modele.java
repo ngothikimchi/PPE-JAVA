@@ -21,12 +21,13 @@ import Controleur.User;
 
 public class modele {
 	
-	private static Bdd uneBdd = new Bdd("localhost","ppe_mairie_lourde","root","root");
+	//private static Bdd uneBdd = new Bdd("172.20.111.164","mairieErmont","kimchi","kimchi@2022");
+	private static Bdd uneBdd = new Bdd("localhost","mairieErmont","root","root");
 
 	public static User selectWhereUser(String email, String mdp) 
 	{
 		User unUser =null;
-		String requete="select * from user where emailUser ='" + email 
+		String requete="select * from user where idRoleUser = '2' and emailUser ='" + email 
 				+"'  and mdpUser ='" + mdp + "';";
 		try  
 		{
@@ -55,6 +56,9 @@ public class modele {
 			return unUser;
 				
 	}
+	
+	
+	//-----------------------------------------------------------------
 
 	public static void insertCitoyen(Citoyen unCitoyen) 
 	{
@@ -64,8 +68,8 @@ public class modele {
 				 + unCitoyen.getLieuNaissance()+"','"
 				+ unCitoyen.getCpNaissance()+"','" + unCitoyen.getAdresse()+"','"
 				+ unCitoyen.getVille()+"','" + unCitoyen.getCp()+"','"
-				+ unCitoyen.getSituation()+"','" + unCitoyen.getEmail()+"','"
-				+ unCitoyen.getQuestion()+"','" + unCitoyen.getReponse()+"');";
+				+ unCitoyen.getSituation()+"','" + unCitoyen.getEmail()+"',sha1('"
+				+ unCitoyen.getQuestion()+"'),sha1('" + unCitoyen.getReponse()+"'));";
 		
 		try 
 		{
@@ -133,6 +137,7 @@ public class modele {
 	{
 		ArrayList<Citoyen> lesCitoyens = new ArrayList<Citoyen>();
 		String requete="select * from citoyen where "
+		+ "idCit like '%" + mot+ "%' or  "
 		+ "nomCit like '%" + mot+ "%' or  "
 		+ "prenomCit like '%" + mot+ "%' or "
 		+ "sexeCit like '%" + mot+ "%' or "
@@ -156,7 +161,8 @@ public class modele {
 			
 			while(desResultats.next())//tant qu'il un resultat suivant
 			{
-				Citoyen unCitoyen = new Citoyen  (						
+				Citoyen unCitoyen = new Citoyen  (	
+						desResultats.getInt("idCit"),
 						desResultats.getString("nomCit"),
 						desResultats.getString("prenomCit"),
 						desResultats.getString("sexeCit"),
@@ -222,9 +228,9 @@ public class modele {
 				+"' and cpCit='" + cp
 				+"' and situationFamilialeCit='" + situation
 				+"' and emailCit ='"+ email
-				+"'and question ='" + question
-				+"' and reponse ='" + reponse
-				+ "';";
+				+"' and question =sha1('" + question
+				+"') and reponse = sha1('" + reponse
+				+ "');";
 		try  
 		{
 			uneBdd.seConnecter();
@@ -1328,7 +1334,7 @@ String requete="delete from type_demande where idTypeDem = " + idTypeD +";";
 				+ uneTypeEveEnfant.getNomTypeE()+"','"
 				+ uneTypeEveEnfant.getAgeMin()+"','"
 				+ uneTypeEveEnfant.getAgeMax()+"','"
-				+ uneTypeEveEnfant.isAccompagnant()
+				+ (uneTypeEveEnfant.isAccompagnant() ? "1" : "0" ) 
 				+ "');";
 		
 		try 
@@ -1351,10 +1357,10 @@ String requete="delete from type_demande where idTypeDem = " + idTypeD +";";
 		String requete="update type_evenement_enfant set nomTypeEve = '"+ uneTypeEveEnfant.getNomTypeE()
 		+ "', trancheAgeMin = '" + uneTypeEveEnfant.getAgeMin()
 		+ "', trancheAgeMax = '" + uneTypeEveEnfant.getAgeMax()
-		+ "', accompagnant ='" + uneTypeEveEnfant.isAccompagnant()
-		+"' where codeTypeEve ="
-		+uneTypeEveEnfant.getCodeTypeE()
-		+";";
+		+ "', accompagnant ='" + (uneTypeEveEnfant.isAccompagnant() ? "1" : "0")
+		+ "' where codeTypeEve ='"
+		+ uneTypeEveEnfant.getCodeTypeE()
+		+"';";
 			
 			try 
 			{
@@ -1604,9 +1610,9 @@ String requete="delete from evenement where idEve = " + idE +";";
 				+ uneEve.getContenuE()+"','"
 				+ uneEve.getAdresseE()+"','"
 				+ uneEve.getDateDebut()+"','"
-				+ uneEve.getDateFin()
+				+ uneEve.getDateFin()+"','"
 				+ uneEve.getDateFinInscription()+"',"
-				+ uneEve.getNbMax()+"','"
+				+ uneEve.getNbMax()+",'"
 				+ uneEve.getCodeTypeE() + "',"
 				+ uneEve.getIdAssoc()
 				+ ");";
@@ -1638,7 +1644,7 @@ String dateDebut,
 			+"' and finEve='" + dateFin
 			+"' and debutEve='" + dateDebut
 			+"' and dateFinInscriptionEve='" + dateFinInscription
-			+"' and nbParticipantMaxEve='" + dateFin
+			+"' and nbParticipantMaxEve='" + nbMax
 			+"' and codeTypeEve='" + codeTypeE
 			+"' and idAssocEve='" + idAssoc
 			+ "';";
@@ -1652,7 +1658,7 @@ String dateDebut,
 		if(unResultat.next())//s'il y a un resultat
 		{
 			uneEve = new Evenement (
-					unResultat.getInt("idDemande"),
+					unResultat.getInt("idEve"),
 					unResultat.getString("nomEve"),	
 					unResultat.getString("contenuEve"),
 					unResultat.getString("adresseEve"),
@@ -1682,10 +1688,10 @@ String dateDebut,
 		+ "nomEve = '"+ uneEve.getNomE()
 		+ "', contenuEve = '" + uneEve.getContenuE()
 		+ "', adresseEve = '" + uneEve.getAdresseE()
-		+ "debutEve = '"+ uneEve.getDateDebut()
+		+ "', debutEve = '"+ uneEve.getDateDebut()
 		+ "', finEve = '" + uneEve.getDateFin()
 		+ "', dateFinInscriptionEve = '" + uneEve.getDateFinInscription()
-		+ "nbParticipantMaxEve = '"+ uneEve.getNbMax()
+		+ "', nbParticipantMaxEve = '"+ uneEve.getNbMax()
 		+ "', codeTypeEve = '" + uneEve.getCodeTypeE()
 		+ "', idAssocEve = " + uneEve.getIdAssoc()
 		+" where idEve ="
@@ -2114,6 +2120,28 @@ String dateDebut,
 			System.out.println("Erreur de requete:" + requete);
 		}
 	return lesEUs;
+	}
+
+
+	public static void insertUser(User unUser) {
+		String requete ="insert into user values (null, '"
+				+ unUser.getEmail()+"'," + "sha1('"+ unUser.getMdp()+"'),'"
+				+ unUser.getIdrole()+"');";
+		
+		try 
+		{
+			uneBdd.seConnecter();
+			Statement unStat = uneBdd.getMaconnexion().createStatement();
+			unStat.execute(requete);
+			unStat.close();
+			uneBdd.seDeconnecter();
+		}
+		
+		catch(SQLException exp)
+		{
+			System.out.println("Erreur de requete:" + requete);
+		}
+		
 	}
 
 	

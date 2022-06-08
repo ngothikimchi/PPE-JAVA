@@ -107,7 +107,8 @@ public class PanelTypeEveEnfant extends PanelDeBase implements ActionListener
 		{
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) 
+			{
 				int nbclic = e.getClickCount();
 				if(nbclic==2)
 				{
