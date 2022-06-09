@@ -630,6 +630,19 @@ public class PanelTypeEve extends PanelDeBase implements ActionListener
 			Object matrice [][] =this.getLesDonnees(mot);
 			unTableauA.setDonnees(matrice);
 		}	
+		
+		else if (e.getSource()==this.btAnnuler)	
+		{
+			if(this.radioTypeEveEnfant.isSelected())
+			{
+				this.viderChamps();
+			}
+			else
+			{
+				this.viderChamps1();
+			}
+		}
+			
 	
 	
 	}
